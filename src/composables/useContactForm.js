@@ -81,6 +81,9 @@ export function useContactForm() {
     submitError.value = ''
   }
 
+  // TODO: Replace with your Formspree form ID from https://formspree.io
+  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID'
+
   const submitForm = async () => {
     if (!validateForm()) {
       return false
@@ -90,14 +93,22 @@ export function useContactForm() {
     submitError.value = ''
 
     try {
-      // Simulate API call - Replace with actual endpoint
-      // Example: await fetch('/api/contact', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(form),
-      // })
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: form.message,
+        }),
+      })
 
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      if (!response.ok) {
+        throw new Error('Form submission failed')
+      }
 
       isSubmitted.value = true
       return true
